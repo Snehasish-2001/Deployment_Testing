@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phishing Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Phishing Detection</h1>
+        <p>Enter a URL to check if it's a phishing website:</p>
+        <form id="phishing-form">
+            <label for="url">URL:</label>
+            <input type="text" id="url" name="url" placeholder="Enter URL here" required>
+            <button type="submit">Check</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("phishing-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const url = document.getElementById("url").value;
+
+            // Make an API request to your Flask server to get the prediction
+            fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ url: url }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const resultElement = document.getElementById("result");
+                    if (data.is_phishing) {
+                        resultElement.style.color = "red";
+                        resultElement.textContent = "Phishing Website Detected!";
+                    } else {
+                        resultElement.style.color = "green";
+                        resultElement.textContent = "Legitimate Website.";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        });
+    </script>
+</body>
+</html>
